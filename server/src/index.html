@@ -1,0 +1,105 @@
+<html>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="main.css">
+	<style>
+		@font-face{
+		  font-family: 'Yanone Kaffeesatz';
+		  src: url('fonts/YanoneKaffeesatz-Regular.ttf');
+		  font-weight: normal;
+		}
+	</style>
+
+	<body>
+		<audio src="buzzer.mp3"></audio>
+		<div id="qrCodeViewer">
+			<div class="info-board">
+				<h5>Join Game</h5>
+				<div id="qrCode"></div>
+				
+				Scan to Join Game
+			</div>
+		</div>
+
+		<div id="boards">
+			<div id="actions" class="info-board">
+				<h1>Actions</h1>
+				<p>
+					<button onclick="nextWords()">
+						NEXT WORDS
+					</button>
+				</p>
+				<p>
+					<button onclick="restartTime()">
+						RESTART TIME
+					</button>
+				</p>
+			</div>
+
+			<div class="info-board">
+				<h1>Time Left</h1>
+				<h2 id="timeLeft"></h2>
+			</div>
+			
+			<div id="words" class="info-board">
+				<h1>Current Words</h1>
+				<div id="curWords"></div>
+			</div>
+		</div>
+		
+		<script src="socket.io.js"></script>
+		<script src="qrcode.min.js"></script>
+		
+		<script>
+			const curWords = document.querySelector("#curWords");
+			const timeLeft = document.querySelector("#timeLeft");
+
+			let socket, full_ip, audio = document.querySelector('audio');
+
+			var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
+			findIP.then(ip => (init(ip))).catch(e => console.error(e))
+
+			function init(ip){
+				full_ip = 'http://' + ip + ':5000';
+				console.log(full_ip);
+				socket = io.connect(full_ip);
+
+				new QRCode(document.querySelector("#qrCode"), {
+					text: full_ip,
+					width: 250,
+					height: 250,
+				});
+
+				socket.on('NEW_USER', function(id){
+					console.log("A new user joined in: ", id);
+				});
+				
+				socket.on('USER_LEFT', function(id){
+					console.log("A user has left: ", id);
+				});
+				
+				socket.on('words', function(words){
+					console.log("New words", words);
+					curWords.innerHTML = "";
+					words.forEach(word => {
+						const h1 = document.createElement('h1');
+						h1.innerText = word;
+						curWords.appendChild(h1)
+					});
+				});
+				
+				socket.on('time', function(time){
+					console.log("New Time", time);
+					timeLeft.innerText = time + " seconds";
+				});
+			}
+
+			function nextWords() {
+				socket.emit('nextWords');
+			}
+			
+			function restartTime() {
+				socket.emit('restartTime');
+			}
+		</script>
+	</body>
+</html>
