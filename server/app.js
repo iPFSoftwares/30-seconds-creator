@@ -73,7 +73,6 @@ io.on('connection', function(socket){
     });
 
     io.emit('game-changed', game);
-    startTimer();
   });
   
   socket.on('nextWords', function(){

@@ -18,7 +18,7 @@ class AppContainer extends React.Component {
 
   getStarted = async (uri) => {
     this.openFullscreen(document.getElementById("root"))
-    window.screen.orientation.lock("portrait-primary");
+    // window.screen.orientation.lock("portrait-primary");
     
     try {
       // const ip = await this.findIP();
