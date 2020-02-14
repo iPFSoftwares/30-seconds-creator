@@ -12,6 +12,14 @@ let curIndex = 0;
 let timer = null;
 let timeLeft = 0;
 
+let game = {
+  turn: 0,
+  currentWords: [],
+  timeLeft: 0,
+  availableTeams: ["A", "B", "C"],
+  scores: [0, 0, 0]
+}
+
 console.log(words);
 
 function startTimer(){
@@ -22,15 +30,22 @@ function startTimer(){
 
   timeLeft = 30;
   io.emit('time', timeLeft);
+
+  game.timeLeft = timeLeft;
+  io.emit('game-changed', game);
   
   timer = setInterval(() => {
     if(timeLeft > 1){
       timeLeft -= 1;
       io.emit('time', timeLeft);
+      game.timeLeft = timeLeft;
+      io.emit('game-changed', game);
     }
     else{
       timeLeft = 0;
       io.emit('time', timeLeft);
+      game.timeLeft = timeLeft;
+      io.emit('game-changed', game);
       clearInterval(timer);
       timer = null;
     }
@@ -40,12 +55,33 @@ function startTimer(){
 io.on('connection', function(socket){
   console.log('a user connected');
 
+  socket.emit('game-changed', game);
   socket.emit('words', words[curIndex]);
   socket.emit('time', timeLeft);
 
+  game.currentWords = words[curIndex].map(word => ({played: false, word}));
+  game.timeLeft = timeLeft;
+  io.emit('game-changed', game);
+
+  socket.on('wordPlayed', function(wordIndex){
+    game.scores[game.turn] = game.scores[game.turn]+1;
+    game.currentWords = game.currentWords.map((word, index) => {
+      if(index === wordIndex)
+        word.played = true;
+
+      return word;
+    });
+
+    io.emit('game-changed', game);
+    startTimer();
+  });
+  
   socket.on('nextWords', function(){
     curIndex++;
+    game.turn = curIndex%3;
     io.emit('words', words[curIndex]);
+    game.currentWords = words[curIndex].map(word => ({played: false, word}));
+    io.emit('game-changed', game);
     startTimer();
   });
   

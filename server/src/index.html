@@ -39,6 +39,10 @@
 				<h1>Time Left</h1>
 				<h2 id="timeLeft"></h2>
 			</div>
+			<div class="info-board">
+				<h1>Scores</h1>
+				<h2 id="scoreBoard"></h2>
+			</div>
 			
 			<div id="words" class="info-board">
 				<h1>Current Words</h1>
@@ -52,6 +56,7 @@
 		<script>
 			const curWords = document.querySelector("#curWords");
 			const timeLeft = document.querySelector("#timeLeft");
+			const scoreBoard = document.querySelector("#scoreBoard");
 
 			let socket, full_ip, audio = document.querySelector('audio');
 
@@ -77,14 +82,21 @@
 					console.log("A user has left: ", id);
 				});
 				
-				socket.on('words', function(words){
+				socket.on('game-changed', function({currentWords, timeLeft, scores}){
 					console.log("New words", words);
 					curWords.innerHTML = "";
-					words.forEach(word => {
+					currentWords.forEach((word, index) => {
 						const h1 = document.createElement('h1');
-						h1.innerText = word;
-						curWords.appendChild(h1)
+						h1.innerText = word.word;
+						h1.className = word.played ? 'played' : '';
+						h1.onclick = function(){
+							socket.emit('wordPlayed', index);
+						}
+						curWords.appendChild(h1);
 					});
+
+					timeLeft.innerText = timeLeft + " seconds";
+					scoreBoard.innerText = scores.join(", ");
 				});
 				
 				socket.on('time', function(time){

@@ -77,7 +77,7 @@
                 var box = $('<div class="box"></div>');
                 var tpl = '';
                 item.forEach((word) => {
-                    tpl += `<span>${word}</span>`;
+                    tpl += `<span class="${word.played ? 'played' : ''}">${word.word}</span>`;
                 });
 
                 box.html(tpl);
