@@ -7,7 +7,21 @@ import './setup.css';
 class Setup extends Component {
     state = {
         joinGame: false,
-        ip: "http://192.168.8.100:5000"
+        ip: "192.168.1.108:5000"
+    }
+
+    componentWillMount(){
+        this.start();
+    }
+
+    async start(){
+        const ip = await this.findIP();
+        console.log("ip", ip);
+        this.setState({ip: ip + ":5000"});
+    }
+
+    findIP(){
+        return new Promise(r => {var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}});
     }
 
     toggleJoin = () => {

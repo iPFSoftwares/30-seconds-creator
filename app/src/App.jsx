@@ -8,6 +8,7 @@ class App extends React.Component {
   }
 
   state = {
+    game: {},
     name: '',
     points: 0,
     words: [],
@@ -28,11 +29,17 @@ class App extends React.Component {
     console.log("Time in: ", timeLeft);
     this.setState({timeLeft});
   }
+  
+  onGameChanged = (game) => {
+    console.log("Game changed", game);
+    this.setState({game});
+  }
 
   render() {
-    const { words, timeLeft } = this.state;
+    const { currentWords, timeLeft } = this.state.game;
     return (
       <div id="mainApp">
+        <Event event='game-changed' handler={this.onGameChanged} />
         <Event event='words' handler={this.onWords} />
         <Event event='time' handler={this.onTime} />
 
@@ -42,7 +49,7 @@ class App extends React.Component {
 
         <div id="wordsList">
           { timeLeft > 0 && 
-            words.map(w => <h1>{w}</h1>)
+            currentWords.map(w => <h1 className={w.played ? 'played' : ''}>{w.word}</h1>)
           }
           
           { timeLeft < 1 && 

@@ -217,6 +217,11 @@ code {
   margin: 0.7em 0;
 }
 
+#wordsList h1.played{
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
 #timeLeft{
   position: fixed;
   top: 2em;

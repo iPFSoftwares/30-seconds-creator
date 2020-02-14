@@ -19,11 +19,12 @@ class AppContainer extends React.Component {
   getStarted = async (uri) => {
     this.openFullscreen(document.getElementById("root"))
     window.screen.orientation.lock("portrait-primary");
-
+    
     try {
       // const ip = await this.findIP();
       // const uri = 'http://' + ip + ':5000';
       this.setState({uri});
+      console.log("URI set: ", uri);
     } catch (error) {
       console.error("Error setting up: ", error);
       alert("Error setting up: " + error.message);
