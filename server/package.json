@@ -4,7 +4,8 @@
   "description": "Markdown based slides, with ability to connect to a phone as web-slides-clicker.",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "generate": "node generate-words.js"
   },
   "repository": {
     "type": "git",
