@@ -1,5 +1,5 @@
-// var words = require('./words.js');
-var words = require('./words2.js');
+var words = require('./words.js');
+// var words = require('./words2.js');
 var express = require('express');
 var app = express();
 
@@ -16,8 +16,8 @@ let game = {
   turn: 0,
   currentWords: [],
   timeLeft: 0,
-  availableTeams: ["A", "B", "C"],
-  scores: [0, 0, 0]
+  availableTeams: ["A", "B", "C", "D"],
+  scores: [0, 0, 0, 0]
 }
 
 console.log(words);
