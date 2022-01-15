@@ -22,7 +22,7 @@
   "homepage": "https://github.com/jestrux/web-slides#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "marked": "^0.5.1",
+    "marked": "^4.0.10",
     "socket.io": "^2.1.1"
   }
 }
